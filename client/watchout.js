@@ -41,17 +41,17 @@ d3.select("svg").selectAll("image")
     .attr("xlink:href", "asteroid.png")
     .attr("x", function(d) { return d[0]; })
     .attr("y", function(d) { return d[1]; })
-    .attr("height", "50")
-    .attr("width", "50")
+    .attr("height", "30")
+    .attr("width", "30")
 
 //change positions of enemies every second
-setInterval(function() {
-  d3.select("svg").selectAll("image")
-    .data(randomVectors(10))
-    .transition().duration(1000)
-     .attr("x", function(d) { return d[0]; })
-     .attr("y", function(d) { return d[1]; })
-  }, 1000);
+// setInterval(function() {
+//   d3.select("svg").selectAll("image")
+//     .data(randomVectors(10))
+//     .transition().duration(1000)
+//      .attr("x", function(d) { return d[0]; })
+//      .attr("y", function(d) { return d[1]; })
+//   }, 1000);
 
 //create user circle, save to var
 var user = d3.select("svg").selectAll("circle")
@@ -86,9 +86,13 @@ var checkCollision = function(){
 
 var wasCollided = false;
 var collisions = 0;
+var highScore = 0;
 setInterval(function() {
   if (!wasCollided && checkCollision()) {
-    //console.log("you died!");
+    if (score > highScore) {
+      highScore = score;
+      d3.select(".highscore").text("High score: " + highScore);
+    }
     score = 0;
     collisions++;
     d3.select(".collisions").text("Collisions: " + collisions);
