@@ -2,8 +2,13 @@
 
 //<image xlink:href="asteroid.png" x="0" y="0" height="50" width="50"/>
 
+//svg
 var width = 960,
     height = 500;
+
+var enemyRadius = 15;
+
+var userRadius = 8;
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
@@ -19,10 +24,8 @@ var svg = d3.select("body").append("svg")
 //     .attr("width", "50")
 
 var randomVector = function() {
-  var result = [];
-  result.push(Math.floor(Math.random() * width));
-  result.push(Math.floor(Math.random() * height));
-  return result;
+  return [ Math.floor(Math.random() * width),
+           Math.floor(Math.random() * height) ];
 };
 
 var randomVectors = function(numVectors) {
@@ -30,53 +33,60 @@ var randomVectors = function(numVectors) {
   for (var i = 0; i < numVectors; i++) {
     results.push(randomVector());
   }
-  //console.log(results);
   return results;
 };
 
+
+//CREATE ENEMIES AND USER -------------------------------
 //create enemies
 d3.select("svg").selectAll("image")
   .data(randomVectors(10)).enter()
   .append("image")
-    .attr("xlink:href", "shur.jpg")
+    .attr("xlink:href", "shuriken.png")
     .attr("x", function(d) { return d[0]; })
     .attr("y", function(d) { return d[1]; })
-    .attr("height", "50")
-    .attr("width", "50")
+    .attr("height", (enemyRadius*2).toString())
+    .attr("width", (enemyRadius*2).toString())
 
-//change positions of enemies every second
-setInterval(function() {
-  d3.select("svg").selectAll("image")
-    .data(randomVectors(10))
-    .transition().duration(1000)
-     .attr("x", function(d) { return d[0]; })
-     .attr("y", function(d) { return d[1]; })
-  }, 1000);
-
-//create user circle, save to var
+//create user (after enemies so that it is shown above the enemies)
 var user = d3.select("svg").selectAll("circle")
   .data([{x: width/2, y: height/2}]).enter()
   .append("circle")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
-    .attr("r", "10")
+    .attr("r", userRadius.toString())
 
+//CHANGE ENEMY AND USER POSITIONS ------------------------
+//automatically change positions of enemies every second
+var moveEnemies = function() {
+  d3.select("svg").selectAll("image")
+    .data(randomVectors(10))
+    .transition().duration(1000)
+     .attr("x", function(d) { return d[0] - enemyRadius; })
+     .attr("y", function(d) { return d[1] - enemyRadius; })
+}
+setInterval(moveEnemies, 1000);
 
+//make user manually draggable
+var drag = d3.behavior.drag()
+  .origin(function(d) { return d; })
+  .on("drag", function(d) {
+    d3.select(this).attr("cx", d.x = Math.max(Math.min(d3.event.x, width), 0))
+                   .attr("cy", d.y = Math.max(Math.min(d3.event.y, height), 0));
+  })
+user.call(drag);
 
+//COLLISION AND SCORE RECORDING ------------------------
 // detect collision with enemy
 var checkCollision = function(){
   var collided = false;
   var userCx = d3.select("circle").attr("cx");
   var userCy = d3.select("circle").attr("cy");
-  var userRadius = d3.select("circle").attr("r");
-  //console.log(userCx, userCy, userRadius);
   d3.selectAll('image').each(function(d,i) {
     var enemy = d3.select(this);
-    var enemyRadius = enemy.attr("width")/2;
-    var enemyCx = enemy.attr("x") + enemyRadius;
-    var enemyCy = enemy.attr("y") + enemyRadius;
+    var enemyCx = enemy.attr("x");
+    var enemyCy = enemy.attr("y");
     var distance = Math.sqrt(Math.pow(userCx - enemyCx, 2) + Math.pow(userCy - enemyCy, 2));
-    //console.log(parseInt(userRadius) + enemyRadius);
     if (distance < parseInt(userRadius) + enemyRadius) {
       collided = true;
     }
@@ -84,11 +94,21 @@ var checkCollision = function(){
   return collided;
 };
 
-var wasCollided = false;
-var collisions = 0;
 var highScore = 0;
-setInterval(function() {
-  if (!wasCollided && checkCollision()) {
+var score = 0;
+var collisions = 0;
+var inCollision = false; //used to determine if we are starting a new collision
+
+//increment score
+var incrementScore = function() {
+  d3.select(".current").text("Current score: " + score);
+  score++;
+};
+setInterval(incrementScore, 50);
+
+//update stats based on collisions
+var updateStats = function() {
+  if (!inCollision && checkCollision()) {
     if (score > highScore) {
       highScore = score;
       d3.select(".highscore").text("High score: " + highScore);
@@ -96,39 +116,10 @@ setInterval(function() {
     score = 0;
     collisions++;
     d3.select(".collisions").text("Collisions: " + collisions);
-    wasCollided = true;
+    inCollision = true;
   } 
   if (!checkCollision()) {
-    wasCollided = false;
-    //console.log("you lived!");
+    inCollision = false;
   }
-}, 10);
-
-//increment score
-var score = 0;
-var incrementScore = function() {
-  d3.select(".current").text("Current score: " + score);
-};
-setInterval(function() {
-  incrementScore();
-  score++;
-}, 50);
-
-var drag = d3.behavior.drag()
-  .origin(function(d) { return d; })
-  .on("dragstart", function(d) {
-    //d3.select(this).classed("dragging", true);
-  })
-  .on("drag", function(d) {
-    // var origVal = this.attributes.cx.value;
-    // origVal = parseInt(origVal);
-    // origVal += 10;
-    // origVal = origVal.toString()
-    // this.attributes.cx.value = origVal;
-    d3.select(this).attr("cx", d.x = d3.event.x)
-                   .attr("cy", d.y = d3.event.y);
-  })
-  .on("dragend", function(d) {
-
-  });
-user.call(drag);
+}
+setInterval(updateStats, 10);
