@@ -30,10 +30,11 @@ var randomVectors = function(numVectors) {
   for (var i = 0; i < numVectors; i++) {
     results.push(randomVector());
   }
-  console.log(results);
+  //console.log(results);
   return results;
 };
 
+//create enemies
 d3.select("svg").selectAll("image")
   .data(randomVectors(10)).enter()
   .append("image")
@@ -43,12 +44,47 @@ d3.select("svg").selectAll("image")
     .attr("height", "50")
     .attr("width", "50")
 
+//change positions of enemies every second
 setInterval(function() {
   d3.select("svg").selectAll("image")
     .data(randomVectors(10))
-     .attr("xlink:href", "asteroid.png")
+    .transition().duration(1000)
      .attr("x", function(d) { return d[0]; })
      .attr("y", function(d) { return d[1]; })
-     .attr("height", "50")
-     .attr("width", "50")
   }, 1000);
+
+//create user circle, save to var
+var user = d3.select("svg").selectAll("circle")
+  .data([{x: width/2, y: height/2}]).enter()
+  .append("circle")
+    .attr("cx", function(d) { return d.x; })
+    .attr("cy", function(d) { return d.y; })
+    .attr("r", "10")
+
+// var drag = d3.behavior.drag();
+// user.call(drag);
+
+// drag.on("dragstart", function() { console.log("dragging"); });
+
+
+// var ourForce = d3.layout.force().start();
+// user.call(ourForce.drag);
+
+var drag = d3.behavior.drag()
+  .origin(function(d) { return d; })
+  .on("dragstart", function(d) {
+    //d3.select(this).classed("dragging", true);
+  })
+  .on("drag", function(d) {
+    // var origVal = this.attributes.cx.value;
+    // origVal = parseInt(origVal);
+    // origVal += 10;
+    // origVal = origVal.toString()
+    // this.attributes.cx.value = origVal;
+    d3.select(this).attr("cx", d.x = d3.event.x)
+                   .attr("cy", d.y = d3.event.y);
+  })
+  .on("dragend", function(d) {
+
+  });
+user.call(drag);
