@@ -3,7 +3,7 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
-svg image {
+/*svg image {
     position: relative;
     background-color: red;    
   
@@ -12,7 +12,51 @@ svg image {
     -moz-animation:spin 4s linear infinite;
     animation:spin 4s linear infinite;
 }
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); -moz-transform-origin: 480px 250px; } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); -webkit-transform-origin: 480px 250px; } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); transform-origin: 480px 250px;
-;}}
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg); 
+    -moz-transform-origin: 480px 250px;
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    -webkit-transform-origin: 480px 250px;
+  }
+}
+@keyframes spin {
+  100% {
+    transform:rotate(10000deg);
+    transform-origin: 480px 250px;
+  }
+}*/
+
+
+/* css keyframes practice */
+#sun {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  left: 480px;
+  top: 250px;
+  background-color: yellow;
+}
+image {
+  animation-name: sunrise;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes sunrise {
+  from {
+    transform: rotate(0deg);
+    
+  }
+  to {
+    transform: rotate(360deg);
+    /*transform-origin: 480px 250px;*/
+  }
+}
+/* end css keyframes practice */

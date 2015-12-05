@@ -38,20 +38,20 @@ var randomVectors = function(numVectors) {
 d3.select("svg").selectAll("image")
   .data(randomVectors(10)).enter()
   .append("image")
-    .attr("xlink:href", "asteroid.png")
+    .attr("xlink:href", "shur.jpg")
     .attr("x", function(d) { return d[0]; })
     .attr("y", function(d) { return d[1]; })
-    .attr("height", "30")
-    .attr("width", "30")
+    .attr("height", "50")
+    .attr("width", "50")
 
 //change positions of enemies every second
-// setInterval(function() {
-//   d3.select("svg").selectAll("image")
-//     .data(randomVectors(10))
-//     .transition().duration(1000)
-//      .attr("x", function(d) { return d[0]; })
-//      .attr("y", function(d) { return d[1]; })
-//   }, 1000);
+setInterval(function() {
+  d3.select("svg").selectAll("image")
+    .data(randomVectors(10))
+    .transition().duration(1000)
+     .attr("x", function(d) { return d[0]; })
+     .attr("y", function(d) { return d[1]; })
+  }, 1000);
 
 //create user circle, save to var
 var user = d3.select("svg").selectAll("circle")
