@@ -117,9 +117,11 @@ var updateStats = function() {
     collisions++;
     d3.select(".collisions").text("Collisions: " + collisions);
     inCollision = true;
+    d3.select("circle").attr("class", "died");
   } 
   if (!checkCollision()) {
     inCollision = false;
+    d3.select("circle").attr("class", "");
   }
 }
 setInterval(updateStats, 10);

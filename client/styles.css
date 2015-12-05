@@ -10,6 +10,13 @@ image {
   animation-iteration-count: infinite;
   transform-origin: 50% 50%;
 }
+circle {
+  fill: black;
+}
+
+.died {
+  fill: red;
+}
 
 @keyframes whirl {
   /*from {
