@@ -83,15 +83,24 @@ var checkCollision = function(){
   });
   return collided;
 };
-
 setInterval(function() {
   if (checkCollision()) {
     //console.log("you died!");
+    score = 0;
   } else {
     //console.log("you lived!");
   }
 }, 10);
 
+//increment score
+var score = 0;
+var incrementScore = function() {
+  d3.select(".current").text("Current score: " + score);
+};
+setInterval(function() {
+  incrementScore();
+  score++;
+}, 50);
 
 var drag = d3.behavior.drag()
   .origin(function(d) { return d; })
