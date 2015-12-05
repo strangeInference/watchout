@@ -61,14 +61,37 @@ var user = d3.select("svg").selectAll("circle")
     .attr("cy", function(d) { return d.y; })
     .attr("r", "10")
 
-// var drag = d3.behavior.drag();
-// user.call(drag);
-
-// drag.on("dragstart", function() { console.log("dragging"); });
 
 
-// var ourForce = d3.layout.force().start();
-// user.call(ourForce.drag);
+// detect collision with enemy
+var checkCollision = function(){
+  var collided = false;
+  var userCx = d3.select("circle").attr("cx");
+  var userCy = d3.select("circle").attr("cy");
+  var userRadius = d3.select("circle").attr("r");
+  //console.log(userCx, userCy, userRadius);
+  d3.selectAll('image').each(function(d,i) {
+    var enemy = d3.select(this);
+    var enemyRadius = enemy.attr("width")/2;
+    var enemyCx = enemy.attr("x") + enemyRadius;
+    var enemyCy = enemy.attr("y") + enemyRadius;
+    var distance = Math.sqrt(Math.pow(userCx - enemyCx, 2) + Math.pow(userCy - enemyCy, 2));
+    //console.log(parseInt(userRadius) + enemyRadius);
+    if (distance < parseInt(userRadius) + enemyRadius) {
+      collided = true;
+    }
+  });
+  return collided;
+};
+
+setInterval(function() {
+  if (checkCollision()) {
+    //console.log("you died!");
+  } else {
+    //console.log("you lived!");
+  }
+}, 10);
+
 
 var drag = d3.behavior.drag()
   .origin(function(d) { return d; })
