@@ -83,11 +83,19 @@ var checkCollision = function(){
   });
   return collided;
 };
+
+var wasCollided = false;
+var collisions = 0;
 setInterval(function() {
-  if (checkCollision()) {
+  if (!wasCollided && checkCollision()) {
     //console.log("you died!");
     score = 0;
-  } else {
+    collisions++;
+    d3.select(".collisions").text("Collisions: " + collisions);
+    wasCollided = true;
+  } 
+  if (!checkCollision()) {
+    wasCollided = false;
     //console.log("you lived!");
   }
 }, 10);
